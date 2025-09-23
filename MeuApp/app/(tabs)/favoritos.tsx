@@ -1,5 +1,11 @@
+import { View } from "native-base"
+import Header from "@/components/Header"
 
-export default function TabTwoScreen() {
-  return  <h1>tela de favoritos</h1>
 
+export default function Favoritos() {
+  return  (
+  <View>  
+    <Header />
+  </View>
+  );
 }

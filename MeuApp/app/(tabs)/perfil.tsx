@@ -1,8 +1,16 @@
+import Header from "@/components/Header";
+import { View } from "native-base";
 
 
 
 export default function TabTwoScreen() {
-  return  <h1>perfil teste</h1>
+  return (
+    <View>
+      <Header/>
+    </View>
+
+
+  );
 
 }
    
