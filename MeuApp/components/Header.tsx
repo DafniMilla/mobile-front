@@ -8,7 +8,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 
 export default function Header() {
   
-  const bg = useColorModeValue("primary.500", "primary.900"); //trocar a cor
+  const bg = useColorModeValue("#f87311", "#f87311"); //trocar a cor
   const textColor = useColorModeValue("white", "gray.100");
   const iconColor = useColorModeValue("white", "gray.100");
 
@@ -35,13 +35,7 @@ export default function Header() {
           </Text>
         </HStack>
 
-        {/* Botão de ação */}
-        <IconButton
-          icon={<Icon as={MaterialIcons} name="menu" color={iconColor} size="lg" />}
-          borderRadius="full"
-          _pressed={{ bg: "primary.700:alpha.20" }}
-          onPress={() => console.log("Menu clicado")}
-        />
+     
       </HStack>
     </Box>
   );
