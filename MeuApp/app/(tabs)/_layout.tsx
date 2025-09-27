@@ -4,6 +4,7 @@ import { Icon, NativeBaseProvider } from 'native-base';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme.web';
+import Header from '@/components/Header';
 
 
 
@@ -12,6 +13,7 @@ export default function TabLayout() {
 
   return (
     <NativeBaseProvider>
+    <Header/>
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
@@ -33,20 +35,7 @@ export default function TabLayout() {
           ),
         }}
       />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => (
-            <Icon
-              as={MaterialCommunityIcons}
-              name="compass"
-              size="28px"
-              color={color}
-            />
-          ),
-        }}
-      />
+     
       <Tabs.Screen
         name="favoritos"
         options={{
