@@ -1,14 +1,16 @@
+// app/auth/_layout.tsx
 import { Stack } from "expo-router";
-
-//rotas públicas
-
+import React from "react";
+import { NativeBaseProvider } from "native-base";
 
 export default function AuthLayout() {
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="login" />
-      <Stack.Screen name="cadastro" />
-      <Stack.Screen name="recuperarSenha" />
-    </Stack>
+    <NativeBaseProvider>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="login" />
+        <Stack.Screen name="cadastro" />
+        <Stack.Screen name="recuperarSenha" />
+      </Stack>
+    </NativeBaseProvider>
   );
 }

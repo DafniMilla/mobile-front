@@ -1,98 +1,94 @@
-import { useState, useEffect } from 'react';
+// app/(tabs)/index.tsx
+import { useState, useEffect, useContext } from 'react';
 import { View, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
-import { Box, Text } from "native-base";
-import { Link } from 'expo-router';
+import { Box, Text } from 'native-base';
+import { Link, useRouter } from 'expo-router';
 import Card from '@/components/Card';
-import SearchBar from '@/components/BarraPesquisa'; // Componente da Barra de Pesquisa
-
-
+import SearchBar from '@/components/BarraPesquisa'; // ajuste o caminho conforme a localização real
+import { AuthContext } from '../context/AuthContext';
 
 export default function Home() {
+  const { token } = useContext(AuthContext);
+  const router = useRouter();
+
   const [filmes, setFilmes] = useState<any[]>([]);
+  const [filmesFiltrados, setFilmesFiltrados] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // --- Estados para a Busca ---
   const [searchText, setSearchText] = useState('');
-  const [filmesFiltrados, setFilmesFiltrados] = useState<any[]>([]);
-  // ---------------------------------
 
-  //  Carregar Filmes
+  // Protege a rota: redireciona para login se não logado
+  useEffect(() => {
+    if (!token) {
+      router.replace('/auth/login');
+    }
+  }, [token]);
+
+  // Carregar filmes
   useEffect(() => {
     const fetchFilmes = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/movies`);
+        const response = await fetch('http://localhost:8000/movies');
         if (!response.ok) throw new Error('Erro ao buscar filmes. Tente novamente mais tarde.');
         const data = await response.json();
         setFilmes(data);
-        setFilmesFiltrados(data); // Inicialmente, os filmes filtrados são todos os filmes
+        setFilmesFiltrados(data);
       } catch (err: any) {
         setError(err.message || 'Ocorreu um erro desconhecido.');
       } finally {
         setLoading(false);
       }
     };
-
     fetchFilmes();
   }, []);
-  //---------
 
-  // Filtrar Filmes  pela barra de pesquisa
+  // Filtrar filmes pela barra de pesquisa
   useEffect(() => {
     if (searchText === '') {
-      // Se a busca estiver vazia, mostre todos os filmes
       setFilmesFiltrados(filmes);
       return;
     }
 
-    // Filtra os filmes
-    const filmesFiltrados = filmes.filter(filme =>
-      // Converte para minúsculas e verifica se o título inclui o texto de busca
+    const filtrados = filmes.filter(filme =>
       filme.title.toLowerCase().includes(searchText.toLowerCase())
     );
+    setFilmesFiltrados(filtrados);
+  }, [searchText, filmes]);
 
-    setFilmesFiltrados(filmesFiltrados);
-  }, [searchText, filmes]); // Executa sempre que o texto de busca ou a lista principal de filmes mudar
+  const handleSearch = (text: string) => setSearchText(text);
 
-  //Função para manipular a mudança de texto na barra de pesquisa
-  const handleSearch = (text: string) => {
-    setSearchText(text);
-  };
-
-  // Tratamento de Loading e Erro 
-  if (loading) {
+  // Loading / Verificação de token
+  if (!token || loading) {
     return (
-      <Box flex={1} bg="#000000ff" justifyContent="center" alignItems="center">
-        <ActivityIndicator size="large" color="#f7420cff" />
-        <Text color="#ff3807ff" mt={2}>Carregando filmes...</Text>
+      <Box flex={1} justifyContent="center" alignItems="center" bg="#000">
+        <ActivityIndicator size="large" color="#ff3807" />
+        <Text color="#ff3807" mt={2}>Verificando autenticação...</Text>
       </Box>
     );
   }
 
+  // Tratamento de erro
   if (error) {
     return (
-      <Box flex={1} bg="#000000ff" justifyContent="center" alignItems="center">
+      <Box flex={1} justifyContent="center" alignItems="center" bg="#000">
         <Text color="red">{error}</Text>
       </Box>
     );
   }
 
-  //  Renderização do Componente
+  // Renderização da lista de filmes
   return (
     <Box flex={1} bg="#030303ff" safeArea>
-
       <SearchBar onChangeText={handleSearch} />
 
-
       {filmesFiltrados.length === 0 && searchText !== '' ? (
-        // Mensagem se a busca não encontrar resultados
         <Box flex={1} justifyContent="center" alignItems="center">
           <Text color="#f7420cff">Nenhum resultado encontrado para "{searchText}".</Text>
         </Box>
       ) : (
-        // Se houver filmes filtrados, renderiza o FlatList
         <FlatList
-          data={filmesFiltrados} // Usa a lista FILTRADA
+          data={filmesFiltrados}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
             <Link href={`/filmes/${item.id}`} asChild>
@@ -101,7 +97,7 @@ export default function Home() {
               </View>
             </Link>
           )}
-          numColumns={2} //colunas
+          numColumns={2}
           contentContainerStyle={styles.listContainer}
         />
       )}
@@ -114,9 +110,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 10,
     paddingBottom: 20,
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.94)"
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.94)',
   },
 });

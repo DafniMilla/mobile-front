@@ -1,15 +1,12 @@
-import { Image } from 'expo-image';
+import { useEffect } from "react";
+import { useRouter } from "expo-router";
 
-import { View } from 'native-base';
-import Header from "@/components/Header";
-
-//tela principal
 export default function Index() {
-  return (
-    <View>
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.location.href = "/auth/login"; 
+    }
+  }, []);
 
-      <Header />
-
-    </View>
-  )
+  return null;
 }
