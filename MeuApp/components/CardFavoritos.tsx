@@ -1,4 +1,5 @@
 import { MaterialIcons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Box, Icon, IconButton, Image, Text } from "native-base";
 import React, { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
@@ -17,15 +18,21 @@ interface CardProps {
   filmes: FilmeProps;
 }
 //-------
+
+const tokenKey = "token";
 export default function Card({ filmes }: CardProps) {
 
   //função de favoritos
   const [favorito, setFavorito] = useState(false);
   useEffect(() => {
     const checkFavorito = async () => {
+        const token = await AsyncStorage.getItem(tokenKey);
       try {
-        const response = await fetch(`http://localhost:8000/favorites/${filmes.id }`);//troquei a porta
+        const response = await fetch(`http://localhost:8000/favorites/favoriteall`,{
+            headers: { Authorization: `Bearer ${token}` }
+        });//troquei a porta
         const data = await response.json();
+        console.log(data)
         setFavorito(data.isFavorito);
       } catch (error) {
         console.error("Erro ao verificar favorito:", error);

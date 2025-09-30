@@ -1,19 +1,24 @@
-import { useEffect, useState } from 'react';
-import { Text, View, StyleSheet, ScrollView, Image, ActivityIndicator } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useLocalSearchParams } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 export default function FilmesDetailsScreen() {
   const { id } = useLocalSearchParams(); // pega o id do filme
   const [filmes, setFilmes] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+  const tokenKey = "token";
   useEffect(() => {
     if (!id) return; // evita erro se id não estiver definido
 
     const fetchFilmesDetails = async () => {
+
+      const token = await AsyncStorage.getItem(tokenKey);
       try {
-        const response = await fetch(`http://localhost:8000/movies/${id}`);
+        const response = await fetch(`http://localhost:8000/movies/${id}`,{
+          headers: { Authorization: `Bearer ${token}` }
+        });
         if (!response.ok) throw new Error('Falha ao buscar os detalhes do filme');
         const data = await response.json();
         setFilmes(data);

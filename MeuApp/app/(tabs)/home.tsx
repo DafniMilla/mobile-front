@@ -1,10 +1,10 @@
 // app/(tabs)/index.tsx
-import { useState, useEffect, useContext } from 'react';
-import { View, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
-import { Box, Text } from 'native-base';
-import { Link, useRouter } from 'expo-router';
-import Card from '@/components/Card';
 import SearchBar from '@/components/BarraPesquisa'; // ajuste o caminho conforme a localização real
+import Card from '@/components/Card';
+import { Link, useRouter } from 'expo-router';
+import { Box, Text } from 'native-base';
+import { useContext, useEffect, useState } from 'react';
+import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native';
 import { AuthContext } from '../context/AuthContext';
 
 export default function Home() {
@@ -29,7 +29,11 @@ export default function Home() {
   useEffect(() => {
     const fetchFilmes = async () => {
       try {
-        const response = await fetch('http://localhost:8000/movies');
+        const response = await fetch('http://localhost:8000/movies',{
+          headers: { Authorization: `Bearer ${token}` }
+        })
+         
+        
         if (!response.ok) throw new Error('Erro ao buscar filmes. Tente novamente mais tarde.');
         const data = await response.json();
         setFilmes(data);

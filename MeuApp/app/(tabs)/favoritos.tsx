@@ -1,9 +1,8 @@
 // Exemplo de como a sua 'Tela de Favoritos' deveria funcionar
-import React, { useState, useEffect } from "react";
-import { FlatList, Text, View } from "react-native";
-import { StyleSheet } from "react-native";
-
-import Card from '@/components/Card';
+import CardFavoritos from '@/components/CardFavoritos';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useEffect, useState } from "react";
+import { FlatList, StyleSheet, Text } from "react-native";
 interface FilmeProps {
   id: number;
   title: string;
@@ -11,6 +10,7 @@ interface FilmeProps {
   author?: string;
 }
 
+  const tokenKey = "token";
 // Tela de Favoritos
 
 export default function FavoritesScreen() {
@@ -18,10 +18,14 @@ export default function FavoritesScreen() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    
     const fetchFavoritos = async () => {
+      const token = await AsyncStorage.getItem(tokenKey);
       try {
       
-        const response = await fetch('http://localhost:8081/favorites'); //troquei a porta
+        const response = await fetch('http://localhost:8000/favorites/favoriteall',{
+          headers: { Authorization: `Bearer ${token}` },
+        }); //troquei a porta
         const data = await response.json();
       
         setFavoritosList(data); 
@@ -49,7 +53,7 @@ export default function FavoritesScreen() {
       data={favoritosList}
       keyExtractor={(item) => String(item.id)}
       numColumns={2} 
-      renderItem={({ item }) => <Card filmes={item} />}
+      renderItem={({ item }) => <CardFavoritos filmes={item} />}
     />
   );
 }
