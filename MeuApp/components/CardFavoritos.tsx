@@ -1,88 +1,112 @@
+// components/Card.tsx
 import { MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Box, Icon, IconButton, Image, Text } from "native-base";
-import React, { useEffect, useState } from "react";
+import { Box, Icon, IconButton, Image, Text, Pressable } from "native-base";
+import React, { useState } from "react";
 import { StyleSheet } from "react-native";
+import { useRouter } from "expo-router";
 
-//CARD PARA EXIBIR FILME
-
-// dados que o componente espera
+// Mesmo interface usada na tela de favoritos
 interface FilmeProps {
   id: number;
   title: string;
   imageUrl: string;
-  author?: string;
+  author: string;
+  releaseDate: string;
+  synopsis?: string;
+  genreId?: number;
+  userId?: number;
+}
+interface FavoriteItem {
+  id: number;
+  movieId: number;
+  userId: number;
+  createdAt: string;
+  movie?: FilmeProps;
 }
 
 interface CardProps {
-  filmes: FilmeProps;
+  favorite: FavoriteItem;
 }
-//-------
 
 const tokenKey = "token";
-export default function Card({ filmes }: CardProps) {
 
-  //função de favoritos
-  const [favorito, setFavorito] = useState(false);
-  useEffect(() => {
-    const checkFavorito = async () => {
-        const token = await AsyncStorage.getItem(tokenKey);
-      try {
-        const response = await fetch(`http://localhost:8000/favorites/favoriteall`,{
-            headers: { Authorization: `Bearer ${token}` }
-        });//troquei a porta
-        const data = await response.json();
-        console.log(data)
-        setFavorito(data.isFavorito);
-      } catch (error) {
-        console.error("Erro ao verificar favorito:", error);
-      }
-    };
+export default function Card({ favorite }: CardProps) {
+  const router = useRouter();
+  const movie = favorite.movie;
+  const [favorito, setFavorito] = useState(true);
 
-    checkFavorito();
-  }, [filmes.id]);
+  if (!movie) {
+    // Se não tiver dados de filme, não renderiza
+    return null;
+  }
+
+  const toggleFavorito = async () => {
+    const token = await AsyncStorage.getItem(tokenKey);
+    if (!token) return;
+
+    try {
+      const response = await fetch(`http://localhost:8000/favorites/${movie.id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) throw new Error("Erro ao favoritar/desfavoritar");
+
+      // Alterna visualmente
+      setFavorito((prev) => !prev);
+    } catch (err) {
+      console.error("Erro no toggle favorito:", err);
+    }
+  };
 
 
-  //estrutura visual
   return (
-    <Box style={styles.cardContainer}>
-      {filmes.imageUrl && (
-        <Box>
-          <Image
-            source={{ uri: filmes.imageUrl }}
-            alt={filmes.title}
-            style={styles.poster}
-            rounded="lg"
-          />
-
-          <IconButton
-            icon={
-              <Icon
-                as={MaterialIcons}
-                name={favorito ? "favorite" : "favorite-border"}
-                color={favorito ? "#850000ff" : "white"}
-                size="lg"
-              />
-            }
-           // onPress={}
-            position="absolute"
-            top={3}
-            right={2}
-          />
-        </Box>
-      )}
-
-      <Text
-        color="#fff"
-        bold
-        mt={2}
-        textAlign="center"
-        numberOfLines={2}
-        ellipsizeMode="tail"
-      >
-        {filmes.title}
-      </Text>
-    </Box>
+    <Pressable >
+      <Box style={styles.cardContainer}>
+        {movie.imageUrl && (
+          <Box>
+            <Image
+              source={{ uri: movie.imageUrl }}
+              alt={movie.title}
+              style={styles.poster}
+              rounded="lg"
+            />
+            <IconButton
+              icon={
+                <Icon
+                  as={MaterialIcons}
+                  name={favorito ? "favorite" : "favorite-border"}
+                  color={favorito ? "#850000ff" : "white"}
+                  size="lg"
+                />
+              }
+              onPress={toggleFavorito}
+              position="absolute"
+              top={3}
+              right={2}
+              zIndex={1}
+              _pressed={{ opacity: 0.7 }}
+            />
+          </Box>
+        )}
+        <Text
+          color="#fff"
+          bold
+          mt={2}
+          textAlign="center"
+          numberOfLines={2}
+          ellipsizeMode="tail"
+        >
+          {movie.title}
+        </Text>
+        <Text color="#ccc" fontSize="xs" textAlign="center">
+          Autor: {movie.author}
+        </Text>
+      </Box>
+    </Pressable>
   );
 }
 
@@ -93,6 +117,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#4e4545f3",
     borderRadius: 5,
+    overflow: "hidden",
   },
   poster: {
     width: 160,

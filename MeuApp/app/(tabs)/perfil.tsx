@@ -56,7 +56,7 @@ export default function ProfileScreen() {
       }
 
       const res = await axios.patch(
-        "http://localhost:8000/users/me",
+        "http://localhost:8000/users/alterar",
         { username, email, imageUrl },
         { headers: { Authorization: `Bearer ${token}` } }
       );

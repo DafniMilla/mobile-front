@@ -2,8 +2,9 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { Box, Icon, IconButton, Image, Text } from "native-base";
 import React, { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
+import axios from "axios";
 
-//CARD PARA EXIBIR FILME
+// CARD PARA EXIBIR FILME
 
 // dados que o componente espera
 interface FilmeProps {
@@ -16,17 +17,21 @@ interface FilmeProps {
 interface CardProps {
   filmes: FilmeProps;
 }
+
 //-------
 export default function Card({ filmes }: CardProps) {
-
-  //função de favoritos
   const [favorito, setFavorito] = useState(false);
+
+  const api = axios.create({
+    baseURL: "http://192.168.0.100:8000", // ⚠️ troque pelo IP da sua máquina
+  });
+
+  // Verifica no backend se o filme já é favorito
   useEffect(() => {
     const checkFavorito = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/favorites/${filmes.id }`);//troquei a porta
-        const data = await response.json();
-        setFavorito(data.isFavorito);
+        const response = await api.get(`/favorites/${filmes.id}`);
+        setFavorito(response.data.isFavorito);
       } catch (error) {
         console.error("Erro ao verificar favorito:", error);
       }
@@ -35,8 +40,23 @@ export default function Card({ filmes }: CardProps) {
     checkFavorito();
   }, [filmes.id]);
 
+  // função para alternar favorito
+  const toggleFavorito = async () => {
+    try {
+      if (favorito) {
+        // remover favorito
+        await api.delete(`/favorites/${filmes.id}`);
+        setFavorito(false);
+      } else {
+        // adicionar favorito
+        await api.post(`/favorites`, { movieId: filmes.id });
+        setFavorito(true);
+      }
+    } catch (error) {
+      console.error("Erro ao atualizar favorito:", error);
+    }
+  };
 
-  //estrutura visual
   return (
     <Box style={styles.cardContainer}>
       {filmes.imageUrl && (
@@ -48,20 +68,8 @@ export default function Card({ filmes }: CardProps) {
             rounded="lg"
           />
 
-          <IconButton
-            icon={
-              <Icon
-                as={MaterialIcons}
-                name={favorito ? "favorite" : "favorite-border"}
-                color={favorito ? "#850000ff" : "white"}
-                size="lg"
-              />
-            }
-           // onPress={}
-            position="absolute"
-            top={3}
-            right={2}
-          />
+          {/* Botão de Favorito */}
+         
         </Box>
       )}
 

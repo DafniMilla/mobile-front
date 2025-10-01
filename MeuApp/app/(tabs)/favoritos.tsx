@@ -1,71 +1,118 @@
-// Exemplo de como a sua 'Tela de Favoritos' deveria funcionar
-import CardFavoritos from '@/components/CardFavoritos';
-import AsyncStorage from "@react-native-async-storage/async-storage";
+// app/favorites/index.tsx   (ou onde sua rota de favoritos estiver)
 import React, { useEffect, useState } from "react";
-import { FlatList, StyleSheet, Text } from "react-native";
+import { View, ActivityIndicator, ScrollView, StyleSheet, Text } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import Card from "../../components/CardFavoritos"; // ou onde você colocou o Card
+import { Box } from "native-base";
+
+// Interfaces compatíveis com o que a API retorna
 interface FilmeProps {
   id: number;
   title: string;
   imageUrl: string;
-  author?: string;
+  author: string;
+  releaseDate: string;
+  synopsis?: string;
+  genreId?: number;
+  userId?: number;
 }
 
-  const tokenKey = "token";
-// Tela de Favoritos
+interface FavoriteItem {
+  id: number;
+  movieId: number;
+  userId: number;
+  createdAt: string;
+  movie?: FilmeProps;  // pode ser undefined, tratar depois
+}
 
 export default function FavoritesScreen() {
-  const [favoritosList, setFavoritosList] = useState<FilmeProps[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [favorites, setFavorites] = useState<FavoriteItem[]>([]);
+
+  const tokenKey = "token";
 
   useEffect(() => {
-    
-    const fetchFavoritos = async () => {
+    const fetchFavorites = async () => {
       const token = await AsyncStorage.getItem(tokenKey);
+      if (!token) {
+        setError("Token de autenticação não encontrado");
+        setLoading(false);
+        return;
+      }
       try {
-      
-        const response = await fetch('http://localhost:8000/favorites/favoriteall',{
+        const response = await fetch("http://localhost:8000/favorites/favoriteall", {
           headers: { Authorization: `Bearer ${token}` },
-        }); //troquei a porta
+        });
+        if (!response.ok) {
+          throw new Error("Falha ao buscar favoritos");
+        }
         const data = await response.json();
-      
-        setFavoritosList(data); 
-      } catch (error) {
-        console.error("Erro ao carregar lista de favoritos:", error);
+        // Data esperado: array de FavoriteItem (alguns podem ter movie undefined)
+        setFavorites(data);
+      } catch (err: any) {
+        setError(err.message);
       } finally {
-        setIsLoading(false);
+        setLoading(false);
       }
     };
 
-    fetchFavoritos();
+    fetchFavorites();
   }, []);
 
-  if (isLoading) {
-    return <Text>Carregando favoritos...</Text>;
+  if (loading) {
+    return (
+      <View style={[styles.container, styles.loadingContainer]}>
+        <ActivityIndicator size="large" color="#fff" />
+      </View>
+    );
   }
 
-  if (favoritosList.length === 0) {
-    return <Text style={styles.msgFavoritos}>Você não tem nenhum filme favorito salvo!</Text>;
-      
+  if (error) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.errorText}>Erro: {error}</Text>
+      </View>
+    );
   }
 
   return (
-    <FlatList
-      data={favoritosList}
-      keyExtractor={(item) => String(item.id)}
-      numColumns={2} 
-      renderItem={({ item }) => <CardFavoritos filmes={item} />}
-    />
+    <ScrollView contentContainerStyle={styles.scrollContent} style={styles.container}>
+      {favorites.length === 0 && (
+        <Text style={styles.noFavText}>Você ainda não favoritou nenhum filme.</Text>
+      )}
+      <Box flexDirection="row" flexWrap="wrap" justifyContent="center">
+        {favorites.map((fav) => {
+          // Só renderiza card se o favorite.movie existir
+          if (!fav.movie) return null;
+          return <Card key={fav.id} favorite={fav} />;
+        })}
+      </Box>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  
-
-    msgFavoritos: {
-        fontSize: 20,           
-        color: '#ff2626ff',       
-        textAlign: 'center',    
-        paddingHorizontal: 20, 
-        fontWeight: 'bold',     
-    },
+  container: {
+    flex: 1,
+    backgroundColor: "#000",
+    padding: 20,
+  },
+  loadingContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  scrollContent: {
+    paddingBottom: 20,
+  },
+  errorText: {
+    color: "red",
+    textAlign: "center",
+    marginTop: 50,
+  },
+  noFavText: {
+    color: "#fff",
+    textAlign: "center",
+    marginVertical: 20,
+  },
 });
