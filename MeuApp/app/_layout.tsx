@@ -1,9 +1,10 @@
 import { Stack } from "expo-router";
 import React from "react";
 import { AuthProvider } from "./context/AuthContext";
-
+import { NativeBaseProvider } from "native-base";
 export default function RootLayout() {
   return (
+     <NativeBaseProvider>
     <AuthProvider>
       <Stack screenOptions={{ headerShown: false }}>
         {/* telas públicas */}
@@ -16,5 +17,6 @@ export default function RootLayout() {
         <Stack.Screen name="(tabs)/favoritos" />
       </Stack>
     </AuthProvider>
+    </NativeBaseProvider>
   );
 }

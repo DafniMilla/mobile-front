@@ -47,7 +47,7 @@ export default function Card({ favorite }: CardProps) {
 
     try {
       const response = await fetch(`http://localhost:8000/favorites/${movie.id}`, {
-        method: "POST",
+        method: "DELETE",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -79,7 +79,7 @@ export default function Card({ favorite }: CardProps) {
                 <Icon
                   as={MaterialIcons}
                   name={favorito ? "favorite" : "favorite-border"}
-                  color={favorito ? "#850000ff" : "white"}
+                  color={favorito ? "#ff9100ff" : "white"}
                   size="lg"
                 />
               }

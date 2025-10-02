@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import axios from "axios";
 
-// CARD PARA EXIBIR FILME
+// CARD PARA EXIBIR FILME 
 
 // dados que o componente espera
 interface FilmeProps {
@@ -23,7 +23,7 @@ export default function Card({ filmes }: CardProps) {
   const [favorito, setFavorito] = useState(false);
 
   const api = axios.create({
-    baseURL: "http://192.168.0.100:8000", // ⚠️ troque pelo IP da sua máquina
+    baseURL: "http://192.168.0.100:8000", 
   });
 
   // Verifica no backend se o filme já é favorito
@@ -68,7 +68,6 @@ export default function Card({ filmes }: CardProps) {
             rounded="lg"
           />
 
-          {/* Botão de Favorito */}
          
         </Box>
       )}
@@ -92,7 +91,7 @@ const styles = StyleSheet.create({
     width: 160,
     margin: 8,
     alignItems: "center",
-    backgroundColor: "#4e4545f3",
+    backgroundColor: "#6e6565a8",
     borderRadius: 5,
   },
   poster: {

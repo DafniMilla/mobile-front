@@ -67,7 +67,7 @@ export default function Home() {
     return (
       <Box flex={1} justifyContent="center" alignItems="center" bg="#000">
         <ActivityIndicator size="large" color="#ff3807" />
-        <Text color="#ff3807" mt={2}>Verificando autenticação...</Text>
+        <Text color="#ff3807" mt={2}>Carregando...</Text>
       </Box>
     );
   }

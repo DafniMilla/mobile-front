@@ -31,7 +31,7 @@ export default function TabLayout() {
             tabBarIcon: ({ color }) => (
               <Icon
                 as={MaterialCommunityIcons}
-                name="home"
+                name="home-outline"
                 size="28px"
                 color={color}
               />

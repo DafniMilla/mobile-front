@@ -1,12 +1,16 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useLocalSearchParams } from 'expo-router';
+import { useRouter } from "expo-router";
+import { Button, Text } from "native-base";
+import { Linking } from 'react-native';
+
+
 import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Image,
   ScrollView,
   StyleSheet,
-  Text,
   View,
   TouchableOpacity,
 } from 'react-native';
@@ -19,7 +23,18 @@ export default function FilmesDetailsScreen() {
   const [error, setError] = useState<string | null>(null);
   const [favorito, setFavorito] = useState(false);
 
+  const router = useRouter();
   const tokenKey = 'token';
+
+  //função para formatar data
+  const dataFormatada = filmes?.releaseDate
+    ? new Date(filmes.releaseDate).toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    })
+    : "Data não disponível";
+
 
   useEffect(() => {
     if (!id) return;
@@ -49,31 +64,55 @@ export default function FilmesDetailsScreen() {
     fetchFilmesDetails();
   }, [id]);
 
-  const toggleFavorito = async () => {
-    const token = await AsyncStorage.getItem(tokenKey);
-    if (!token) {
-      setError('Token de autenticação não encontrado');
-      return;
-    }
 
+
+
+
+
+  const toggleFavorito = async () => {
     try {
+      // Pega o token do AsyncStorage
+      const token = await AsyncStorage.getItem(tokenKey);
+
+      if (!token) {
+        setError("Token não encontrado. Faça login novamente.");
+        return;
+      }
+
+      // Define o método da requisição: POST para adicionar, DELETE para remover
+      const method = favorito ? "DELETE" : "POST";
+
       const response = await fetch(`http://localhost:8000/favorites/${id}`, {
-        method: 'POST',
+        method,
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
 
-      if (!response.ok) {
-        throw new Error('Erro ao favoritar o filme');
+      if (response.status === 401) {
+        // Token inválido ou expirado
+        setError("Não autorizado. Faça login novamente.");
+        return;
       }
 
-      setFavorito(true); // Marca como favorito localmente
+      if (!response.ok) {
+        // Qualquer outro erro
+        const data = await response.json().catch(() => ({}));
+        const msg = data?.message || "Erro ao favoritar/desfavoritar o filme.";
+        throw new Error(msg);
+      }
+
+      // Atualiza o estado local
+      setFavorito(!favorito);
     } catch (err: any) {
+      console.error("Erro no toggleFavorito:", err);
       setError(err.message);
     }
   };
+
+
+
 
   if (loading) {
     return (
@@ -111,11 +150,41 @@ export default function FilmesDetailsScreen() {
 
       <View style={styles.detailsBox}>
         <Text style={styles.title}>Título: {filmes.title}</Text>
-        <Text style={styles.subtitle}>Lançamento: {filmes.releaseDate}</Text>
-        <Text style={styles.overview}>Sinopse: {filmes.synopsis}</Text>
+        <Text style={styles.subtitle}>Lançamento: {dataFormatada}</Text>
         <Text style={styles.overview}>Autor: {filmes.author}</Text>
+        <Text style={styles.subtitle}>Sinopse:</Text>
+        <Text style={styles.overview}>{filmes.synopsis}</Text>
+
       </View>
+      <Button
+        onPress={() => {
+          if (filmes.movieLink) {
+            Linking.openURL(filmes.movieLink);
+          } else {
+            setError("Link do filme não disponível.");
+          }
+        }}
+        mb={12}
+        borderRadius={15}
+        bg={'#ff7300e5'} 
+      >
+        <Text color="white" bold>Assista Agora</Text>
+      </Button>
+
+      <Button
+
+        startIcon={<MaterialIcons name="arrow-back" size={20} color="#ffffffff" />}
+        onPress={() => router.push("/home")} 
+        mb={12}
+        borderRadius={15}
+        bg={'#ff7300e5'}
+
+      >
+        <Text color="white" bold>Voltar</Text>
+      </Button>
     </ScrollView>
+
+
   );
 }
 
@@ -145,7 +214,7 @@ const styles = StyleSheet.create({
     top: 15,
     right: 15,
     zIndex: 10,
-    backgroundColor: 'rgba(0,0,0,0.4)',
+    backgroundColor: 'rgba(238, 197, 197, 0.18)',
     borderRadius: 20,
     padding: 5,
   },
@@ -160,14 +229,14 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: 19,
     color: '#ccc',
     textAlign: 'center',
     marginBottom: 15,
   },
   overview: {
-    fontSize: 14,
-    color: '#fff',
+    fontSize: 19,
+    color: '#ccc',
     lineHeight: 20,
     textAlign: 'center',
     marginBottom: 10,
