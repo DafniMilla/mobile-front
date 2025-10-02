@@ -10,6 +10,7 @@ export default function AuthLayout() {
         <Stack.Screen name="login" />
         <Stack.Screen name="cadastro" />
         <Stack.Screen name="recuperarSenha" />
+         <Stack.Screen name="reset-password" />
       </Stack>
     </NativeBaseProvider>
   );

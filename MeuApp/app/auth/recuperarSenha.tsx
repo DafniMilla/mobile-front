@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { Box, Input, Button, Heading, VStack, Text, HStack, Image } from "native-base";
 import axios from "axios";
 import { useRouter } from "expo-router";
+import { Box, Button, Heading, HStack, Image, Input, Text, VStack } from "native-base";
+import React, { useState } from "react";
 
 export default function ForgotPassword() {
   const router = useRouter();
@@ -13,7 +13,7 @@ export default function ForgotPassword() {
     setMessage("");
     setError("");
     try {
-      await axios.post("http://localhost:8000/auth/recuperarSenha", { email });
+      await axios.post("http://localhost:8000/auth/esqueceusenha", { email });
       setMessage("Se o email estiver cadastrado, você receberá instruções.");
     } catch (err: any) {
       setError(err.response?.data?.message || "Erro ao enviar email.");
