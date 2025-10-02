@@ -1,14 +1,13 @@
-import React, { useState } from "react";
-import { Box, Input, Button, Heading, VStack, Text, HStack, Image } from "native-base";
 import axios from "axios";
 import { useRouter } from "expo-router";
+import { Box, Button, Heading, HStack, Image, Input, Text, VStack } from "native-base";
+import React, { useState } from "react";
 
 export default function Cadastro() {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
   const [error, setError] = useState("");
 
   const handleRegister = async () => {
@@ -17,7 +16,7 @@ export default function Cadastro() {
         username,
         email,
         password,
-        imageUrl,
+       
       });
       router.replace("/auth/login");
     } catch (err: any) {
@@ -50,7 +49,6 @@ export default function Cadastro() {
         <Input placeholder="Nome de usuário" value={username} onChangeText={setUsername} bg="#000" color="#fff" />
         <Input placeholder="Email" value={email} onChangeText={setEmail} bg="#000" color="#fff" />
         <Input placeholder="Senha" type="password" value={password} onChangeText={setPassword} bg="#000" color="#fff" />
-        <Input placeholder="URL da imagem (opcional)" value={imageUrl} onChangeText={setImageUrl} bg="#000" color="#fff" />
         {error ? <Text color="red.500">{error}</Text> : null}
         <Button onPress={handleRegister} colorScheme="red">
           Cadastrar

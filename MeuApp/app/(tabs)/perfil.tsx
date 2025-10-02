@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, ActivityIndicator } from "react-native";
-import { Box, Button, Icon } from "native-base";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRouter } from "expo-router";
-import axios from "axios";
 import { MaterialIcons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import { useRouter } from "expo-router";
+import { Box, Button, Icon } from "native-base";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -57,7 +57,7 @@ export default function ProfileScreen() {
 
       const res = await axios.patch(
         "http://localhost:8000/users/alterar",
-        { username, email, imageUrl },
+        { username, email },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -116,7 +116,7 @@ export default function ProfileScreen() {
 
       {renderField("Usuário:", username, "username")}
       {renderField("Email:", email, "email")}
-      {renderField("Foto (URL):", imageUrl, "imageUrl")}
+     
 
       {loading && <ActivityIndicator size="large" color="#ff3807" style={{ marginVertical: 10 }} />}
       {message !== "" && <Text style={styles.message}>{message}</Text>}
