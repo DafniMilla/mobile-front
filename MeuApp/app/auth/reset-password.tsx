@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { Box, Input, Button, Heading, VStack, Text, HStack, Image } from "native-base";
 import axios from "axios";
-import { useRouter, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { Box, Button, Heading, HStack, Image, Input, Text, VStack } from "native-base";
+import React, { useState } from "react";
 
 export default function ResetPassword() {
   const router = useRouter();
@@ -48,7 +48,7 @@ export default function ResetPassword() {
         </Heading>
       </HStack>
 
-      <Heading mb={4} color="#ff3807ff">
+      <Heading mb={4} color="#ff9100ff">
         Criar Nova Senha
       </Heading>
 
@@ -63,13 +63,15 @@ export default function ResetPassword() {
         />
         {message ? <Text color="green.500">{message}</Text> : null}
         {error ? <Text color="red.500">{error}</Text> : null}
-        <Button onPress={handleReset} colorScheme="red">
+        <Button onPress={handleReset} bg="#ff9100ff"
+         _hover={{ 
+            bg:"#ff910036" }}>
           Redefinir Senha
         </Button>
         <Button
           variant="link"
           onPress={() => router.push("/auth/login")}
-          _text={{ color: "#ff3807ff" }}
+          _text={{ color: "#ff9100ff" }}
         >
           Voltar para Login
         </Button>

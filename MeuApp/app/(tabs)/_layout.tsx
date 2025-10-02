@@ -1,11 +1,11 @@
 // app/(tabs)/_layout.tsx
-import { Tabs, Redirect } from "expo-router";
+import Header from "@/components/Header";
+import { Colors } from "@/constants/theme";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Redirect, Tabs } from "expo-router";
+import { Icon, NativeBaseProvider } from "native-base";
 import React, { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
-import { Icon, NativeBaseProvider } from "native-base";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Colors } from "@/constants/theme";
-import Header from "@/components/Header";
 
 export default function TabLayout() {
   const { token } = useContext(AuthContext);

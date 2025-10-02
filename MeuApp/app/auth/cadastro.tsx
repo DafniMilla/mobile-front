@@ -33,15 +33,16 @@ export default function Cadastro() {
                   source={require("../../assets/images/logocinema.jpg")}
                   alt="Logo CineAbaloso"
                   size="12"
+                  borderRadius={50}
                   resizeMode="contain"
                   mr={2}
                 />
-        <Heading color="#fff" fontSize="2xl">
+        <Heading color="#ff9100ff" fontSize="2xl">
           CineAbaloso
         </Heading>
       </HStack>
 
-      <Heading mb={4} color="#ff3807ff">
+      <Heading mb={4} color="#ff9100ff">
         Cadastro
       </Heading>
 
@@ -50,10 +51,11 @@ export default function Cadastro() {
         <Input placeholder="Email" value={email} onChangeText={setEmail} bg="#000" color="#fff" />
         <Input placeholder="Senha" type="password" value={password} onChangeText={setPassword} bg="#000" color="#fff" />
         {error ? <Text color="red.500">{error}</Text> : null}
-        <Button onPress={handleRegister} colorScheme="red">
+        <Button onPress={handleRegister} bg="#ff9100ff"  _hover={{ 
+            bg:"#ff910036" }}>
           Cadastrar
         </Button>
-        <Button variant="link" onPress={() => router.push("/auth/login")} _text={{ color: "#ff3807ff" }}>
+        <Button variant="link" onPress={() => router.push("/auth/login")} _text={{ color: "#ff9100ff" }}>
           Já tenho conta
         </Button>
       </VStack>

@@ -21,23 +21,24 @@ export default function ForgotPassword() {
   };
 
   return (
-  <Box flex={1} justifyContent="center" alignItems="center" p={4} bg="#030303ff">
-        <HStack alignItems="center" mb={6}>
-          <Image
-            source={require("../../assets/images/logocinema.jpg")}
-            alt="Logo CineAbaloso"
-            size="12"
-            resizeMode="contain"
-            mr={2}
-          />
-          <Heading color="#fff" fontSize="2xl">
-            CineAbaloso
-          </Heading>
-        </HStack>
-  
-        <Heading mb={4} color="#ff3807ff">
-          Recuperar Senha
+    <Box flex={1} justifyContent="center" alignItems="center" p={4} bg="#030303ff">
+      <HStack alignItems="center" mb={6}>
+        <Image
+          source={require("../../assets/images/logocinema.jpg")}
+          alt="Logo CineAbaloso"
+          size="12"
+          resizeMode="contain"
+          borderRadius={50}
+          mr={2}
+        />
+        <Heading color="#ff9100ff" fontSize="2xl">
+          CineAbaloso
         </Heading>
+      </HStack>
+
+      <Heading mb={4} color="#ff9100ff">
+        Recuperar Senha
+      </Heading>
       <VStack space={4} w="100%" bg="rgba(0,0,0,0.94)" p={4} borderRadius={12}>
         <Input
           placeholder="Email"
@@ -48,13 +49,15 @@ export default function ForgotPassword() {
         />
         {message ? <Text color="green.500">{message}</Text> : null}
         {error ? <Text color="red.500">{error}</Text> : null}
-        <Button onPress={handleRecover} colorScheme="red">
+        <Button onPress={handleRecover} bg="#ff9100ff"
+          _hover={{ 
+            bg:"#ff910036" }}>
           Enviar instruções
         </Button>
         <Button
           variant="link"
           onPress={() => router.push("/auth/login")}
-          _text={{ color: "#ff3807ff" }}
+          _text={{ color: "#ff9100ff" }}
         >
           Voltar para Login
         </Button>

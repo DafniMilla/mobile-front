@@ -1,8 +1,7 @@
-import React, { useState, useContext } from "react";
-import { Box, Input, Button, Heading, VStack, Text, Image, HStack } from "native-base";
 import axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
+import { Box, Button, Heading, HStack, Image, Input, Text, VStack } from "native-base";
+import React, { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContext"; // importa o contexto
 
 export default function Login() {
@@ -51,12 +50,12 @@ export default function Login() {
           resizeMode="contain"
           mr={2}
         />
-        <Heading color="#fff" fontSize="2xl">
+        <Heading color="#ff9100ff" fontSize="2xl">
           CineAbaloso
         </Heading>
       </HStack>
 
-      <Heading mb={4} color="#ff3807ff">
+      <Heading mb={4} color="#ff9100ff">
         Login
       </Heading>
 
@@ -78,14 +77,15 @@ export default function Login() {
         />
         {error ? <Text color="red.500">{error}</Text> : null}
 
-        <Button onPress={handleLogin} colorScheme="red">
+        <Button onPress={handleLogin}  _hover={{ 
+            bg:"#ff910036" }} bg={'#ff9100ff'}>
           Entrar
         </Button>
 
         <Button
           variant="link"
           onPress={() => router.push("/auth/cadastro")}
-          _text={{ color: "#ff3807ff" }}
+          _text={{ color: "#ff9100ff" }}
         >
           Criar conta
         </Button>
@@ -93,7 +93,7 @@ export default function Login() {
         <Button
           variant="link"
           onPress={() => router.push("/auth/recuperarSenha")}
-          _text={{ color: "#ff3807ff" }}
+          _text={{ color: "#ff9100ff" }}
         >
           Esqueci minha senha
         </Button>
