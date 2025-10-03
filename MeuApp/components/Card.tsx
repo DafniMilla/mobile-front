@@ -1,4 +1,4 @@
-import { MaterialIcons } from "@expo/vector-icons";
+
 import { Box, Icon, IconButton, Image, Text } from "native-base";
 import React, { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
@@ -41,21 +41,21 @@ export default function Card({ filmes }: CardProps) {
   }, [filmes.id]);
 
   // função para alternar favorito
-  const toggleFavorito = async () => {
-    try {
-      if (favorito) {
+  //const toggleFavorito = async () => {
+   // try {
+    //  if (favorito) {
         // remover favorito
-        await api.delete(`/favorites/${filmes.id}`);
-        setFavorito(false);
-      } else {
+   //     await api.delete(`/favorites/${filmes.id}`);
+    //    setFavorito(false);
+     // } else {
         // adicionar favorito
-        await api.post(`/favorites`, { movieId: filmes.id });
-        setFavorito(true);
-      }
-    } catch (error) {
-      console.error("Erro ao atualizar favorito:", error);
-    }
-  };
+      //  await api.post(`/favorites`, { movieId: filmes.id });
+      //  setFavorito(true);
+   //   }
+  //  } catch (error) {
+  //    console.error("Erro ao atualizar favorito:", error);
+  //  }
+ // };
 
   return (
     <Box style={styles.cardContainer}>

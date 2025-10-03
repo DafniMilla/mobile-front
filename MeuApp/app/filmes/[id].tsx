@@ -3,7 +3,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { useRouter } from "expo-router";
 import { Button, Text } from "native-base";
 import { Linking } from 'react-native';
-
+import axios from "axios";
 
 import { useEffect, useState } from 'react';
 import {
@@ -39,7 +39,7 @@ export default function FilmesDetailsScreen() {
   useEffect(() => {
     if (!id) return;
 
-    const fetchFilmesDetails = async () => {
+    const axiosFilmesDetails = async () => {
       const token = await AsyncStorage.getItem(tokenKey);
       if (!token) {
         setError('Token de autenticação não encontrado');
@@ -48,12 +48,11 @@ export default function FilmesDetailsScreen() {
       }
 
       try {
-        const response = await fetch(`http://localhost:8000/movies/${id}`, {
+        const response = await axios.get(`http://localhost:8000/movies/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        if (!response.ok) throw new Error('Falha ao buscar os detalhes do filme');
-        const data = await response.json();
-        setFilmes(data);
+        if (!response) throw new Error('Falha ao buscar os detalhes do filme');
+        setFilmes(response.data);
       } catch (err: any) {
         setError(err.message);
       } finally {
@@ -61,17 +60,11 @@ export default function FilmesDetailsScreen() {
       }
     };
 
-    fetchFilmesDetails();
+    axiosFilmesDetails();
   }, [id]);
-
-
-
-
-
 
   const toggleFavorito = async () => {
     try {
-      // Pega o token do AsyncStorage
       const token = await AsyncStorage.getItem(tokenKey);
 
       if (!token) {
@@ -79,10 +72,10 @@ export default function FilmesDetailsScreen() {
         return;
       }
 
-      // Define o método da requisição: POST para adicionar, DELETE para remover
       const method = favorito ? "DELETE" : "POST";
 
-      const response = await fetch(`http://localhost:8000/favorites/${id}`, {
+      const response = await axios.request({
+        url: `http://localhost:8000/favorites/${id}`,
         method,
         headers: {
           "Content-Type": "application/json",
@@ -91,28 +84,17 @@ export default function FilmesDetailsScreen() {
       });
 
       if (response.status === 401) {
-        // Token inválido ou expirado
         setError("Não autorizado. Faça login novamente.");
         return;
       }
 
-      if (!response.ok) {
-        // Qualquer outro erro
-        const data = await response.json().catch(() => ({}));
-        const msg = data?.message || "Erro ao favoritar/desfavoritar o filme.";
-        throw new Error(msg);
-      }
-
-      // Atualiza o estado local
+      // Se chegou aqui, deu certo → atualiza o estado
       setFavorito(!favorito);
     } catch (err: any) {
       console.error("Erro no toggleFavorito:", err);
       setError(err.message);
     }
   };
-
-
-
 
   if (loading) {
     return (
@@ -154,8 +136,8 @@ export default function FilmesDetailsScreen() {
         <Text style={styles.overview}>Autor: {filmes.author}</Text>
         <Text style={styles.subtitle}>Sinopse:</Text>
         <Text style={styles.overview}>{filmes.synopsis}</Text>
-
       </View>
+
       <Button
         onPress={() => {
           if (filmes.movieLink) {
@@ -166,25 +148,23 @@ export default function FilmesDetailsScreen() {
         }}
         mb={12}
         borderRadius={15}
-        bg={'#ff7300e5'} 
+        bg={'#ff7300e5'}
+        _hover={{ bg: "#ff910036" }}
       >
         <Text color="white" bold>Assista Agora</Text>
       </Button>
 
       <Button
-
         startIcon={<MaterialIcons name="arrow-back" size={20} color="#ffffffff" />}
-        onPress={() => router.push("/home")} 
+        onPress={() => router.push("/home")}
         mb={12}
         borderRadius={15}
         bg={'#ff7300e5'}
-
+        _hover={{ bg: "#ff910036" }}
       >
         <Text color="white" bold>Voltar</Text>
       </Button>
     </ScrollView>
-
-
   );
 }
 

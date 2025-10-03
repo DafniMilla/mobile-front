@@ -1,11 +1,12 @@
 // app/(tabs)/index.tsx
-import SearchBar from '@/components/BarraPesquisa'; // ajuste o caminho conforme a localização real
+import SearchBar from '@/components/BarraPesquisa'; 
 import Card from '@/components/Card';
 import { Link, useRouter } from 'expo-router';
 import { Box, Text } from 'native-base';
 import { useContext, useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native';
 import { AuthContext } from '../context/AuthContext';
+import axios from "axios";
 
 export default function Home() {
   const { token } = useContext(AuthContext);
@@ -18,7 +19,7 @@ export default function Home() {
 
   const [searchText, setSearchText] = useState('');
 
-  // Protege a rota: redireciona para login se não logado
+  // Protege a rota
   useEffect(() => {
     if (!token) {
       router.replace('/auth/login');
@@ -27,27 +28,28 @@ export default function Home() {
 
   // Carregar filmes
   useEffect(() => {
-    const fetchFilmes = async () => {
+    const axiosFilmes = async () => {
       try {
-        const response = await fetch('http://localhost:8000/movies',{
+        const response = await axios.get('http://localhost:8000/movies', {
           headers: { Authorization: `Bearer ${token}` }
-        })
-         
+        });
         
-        if (!response.ok) throw new Error('Erro ao buscar filmes. Tente novamente mais tarde.');
-        const data = await response.json();
-        setFilmes(data);
-        setFilmesFiltrados(data);
+        if (!response || !response.data) {
+          throw new Error('Erro ao buscar filmes. Tente novamente mais tarde.');
+        }
+
+        setFilmes(response.data);
+        setFilmesFiltrados(response.data);
       } catch (err: any) {
         setError(err.message || 'Ocorreu um erro desconhecido.');
       } finally {
         setLoading(false);
       }
     };
-    fetchFilmes();
-  }, []);
+    axiosFilmes();
+  }, [token]);
 
-  // Filtrar filmes pela barra de pesquisa
+  // Filtrar filmes
   useEffect(() => {
     if (searchText === '') {
       setFilmesFiltrados(filmes);
@@ -62,7 +64,6 @@ export default function Home() {
 
   const handleSearch = (text: string) => setSearchText(text);
 
-  // Loading / Verificação de token
   if (!token || loading) {
     return (
       <Box flex={1} justifyContent="center" alignItems="center" bg="#000">
@@ -72,7 +73,6 @@ export default function Home() {
     );
   }
 
-  // Tratamento de erro
   if (error) {
     return (
       <Box flex={1} justifyContent="center" alignItems="center" bg="#000">
@@ -81,7 +81,6 @@ export default function Home() {
     );
   }
 
-  // Renderização da lista de filmes
   return (
     <Box flex={1} bg="#030303ff" safeArea>
       <SearchBar onChangeText={handleSearch} />

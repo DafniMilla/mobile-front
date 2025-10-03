@@ -122,12 +122,14 @@ export default function ProfileScreen() {
       {message !== "" && <Text style={styles.message}>{message}</Text>}
 
       {editField && !loading && (
-        <Button mt={4} colorScheme="red" onPress={handleSave}>
+        <Button mt={4}  onPress={handleSave} bg={'#ff9100ff'}  _hover={{ 
+            bg:"#ff910036" }}>
           Salvar
         </Button>
       )}
 
-      <Button mt={6} colorScheme="red" onPress={handleLogout}>
+      <Button mt={6}  onPress={handleLogout} bg={'#ff9100ff'}  _hover={{ 
+            bg:"#ff910036" }}>
         Logout
       </Button>
     </Box>

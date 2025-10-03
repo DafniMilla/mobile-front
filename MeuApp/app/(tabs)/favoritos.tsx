@@ -4,6 +4,7 @@ import { View, ActivityIndicator, ScrollView, StyleSheet, Text } from "react-nat
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Card from "../../components/CardFavoritos"; // ou onde você colocou o Card
 import { Box } from "native-base";
+import axios from "axios";
 
 // Interfaces compatíveis com o que a API retorna
 interface FilmeProps {
@@ -33,7 +34,7 @@ export default function FavoritesScreen() {
   const tokenKey = "token";
 
   useEffect(() => {
-    const fetchFavorites = async () => {
+    const axiosFavorites = async () => {
       const token = await AsyncStorage.getItem(tokenKey);
       if (!token) {
         setError("Token de autenticação não encontrado");
@@ -41,13 +42,13 @@ export default function FavoritesScreen() {
         return;
       }
       try {
-        const response = await fetch("http://localhost:8000/favorites/favoriteall", {
+        const response = await axios.get("http://localhost:8000/favorites/favoriteall", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        if (!response.ok) {
+        if (!response.data) {
           throw new Error("Falha ao buscar favoritos");
         }
-        const data = await response.json();
+        const data:  FavoriteItem[] = response.data;
         // Data esperado: array de FavoriteItem (alguns podem ter movie undefined)
         setFavorites(data);
       } catch (err: any) {
@@ -57,7 +58,7 @@ export default function FavoritesScreen() {
       }
     };
 
-    fetchFavorites();
+    axiosFavorites();
   }, []);
 
   if (loading) {

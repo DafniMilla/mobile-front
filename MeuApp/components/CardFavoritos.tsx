@@ -1,10 +1,10 @@
-// components/Card.tsx
 import { MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Box, Icon, IconButton, Image, Text, Pressable } from "native-base";
 import React, { useState } from "react";
 import { StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
+import axios from "axios"; // ✅ importa axios
 
 // Mesmo interface usada na tela de favoritos
 interface FilmeProps {
@@ -37,7 +37,6 @@ export default function Card({ favorite }: CardProps) {
   const [favorito, setFavorito] = useState(true);
 
   if (!movie) {
-    // Se não tiver dados de filme, não renderiza
     return null;
   }
 
@@ -46,14 +45,19 @@ export default function Card({ favorite }: CardProps) {
     if (!token) return;
 
     try {
-      const response = await fetch(`http://localhost:8000/favorites/${movie.id}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (!response.ok) throw new Error("Erro ao favoritar/desfavoritar");
+      
+      const response = await axios.delete(
+        `http://localhost:8000/favorites/${movie.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.status !== 200) {
+        throw new Error("Erro ao favoritar/desfavoritar");
+      }
 
       // Alterna visualmente
       setFavorito((prev) => !prev);
@@ -62,9 +66,8 @@ export default function Card({ favorite }: CardProps) {
     }
   };
 
-
   return (
-    <Pressable >
+    <Pressable>
       <Box style={styles.cardContainer}>
         {movie.imageUrl && (
           <Box>

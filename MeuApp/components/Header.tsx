@@ -8,7 +8,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 
 export default function Header() {
   
-  const bg = useColorModeValue("#f87311", "#f87311"); //trocar a cor
+  const bg = useColorModeValue("#ff9100ff", "#f87311"); //trocar a cor
   const textColor = useColorModeValue("white", "gray.100");
   const iconColor = useColorModeValue("white", "gray.100");
 
