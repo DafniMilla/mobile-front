@@ -41,12 +41,12 @@ Adicionar, Listar e remover dos favoritos.
 
 1. Clone o repositório
 git clone https://github.com/DafniMilla/mobile-front.git
+
 cd MeuApp
 
-2. Instale as dependências
-npm install
-# ou
-yarn install
+3. Instale as dependências
+npm install ou yarn install
+
 
 4. Execute o projeto
 npm start
