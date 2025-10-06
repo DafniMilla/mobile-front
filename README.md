@@ -39,13 +39,10 @@ Adicionar, Listar e remover dos favoritos.
 
 ## 📦 Instalação e Execução
 
-1. Clone o repositório
-git clone https://github.com/DafniMilla/mobile-front.git
+1. Clone o repositório: `git clone https://github.com/DafniMilla/mobile-front.git`
 
-Entre na pasta do projeto: `cd MeuApp`
+2. Entre na pasta do projeto: `cd MeuApp`
 
-3. Instale as dependências:
-   
-`npm install ou yarn install`
+3. Instale as dependências: `npm install ou yarn install`
 
-5. Execute o projeto : `npm start`
+4. Execute o projeto : `npm start`
